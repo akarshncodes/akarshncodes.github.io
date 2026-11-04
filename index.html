@@ -263,8 +263,8 @@ html:not(.anim) .bigmarq .t{animation:mq 30s linear infinite}
 .note{margin:0;font-size:14px;color:var(--muted)}.note.ok{color:#62d6a4}.note.err{color:#ff9a8a}
 @media(max-width:900px){.desk{grid-template-columns:1fr}.desk aside{border-right:0;border-bottom:1px solid var(--line)}.two{grid-template-columns:1fr}}
 
-footer{padding-block:80px max(36px,env(safe-area-inset-bottom,0px));overflow:hidden}
-.huge{display:flex;justify-content:space-between;font:900 clamp(72px,17.5vw,300px)/.8 var(--f-disp);letter-spacing:-.07em;margin:0;user-select:none}
+footer{padding-block:40px max(36px,env(safe-area-inset-bottom,0px));overflow:hidden}
+.huge{display:flex;justify-content:space-between;font:900 clamp(72px,17.5vw,300px)/.9 var(--f-disp);letter-spacing:-.07em;margin:0;padding-bottom:.04em;user-select:none}
 .huge span{display:inline-block;transition:transform .5s var(--ease),color .5s}
 .huge:hover span{color:var(--saffron)}
 .huge span:hover{transform:translateY(-8%)}
@@ -609,7 +609,6 @@ if(hasG){
   ScrollTrigger.create({start:0,end:'max',onUpdate:theme});theme();
 
   // footer name
-  gsap.from('.huge span',{yPercent:100,duration:1.2,ease:'expo.out',stagger:.04,scrollTrigger:{trigger:'.huge',start:'top 95%',once:true}});
 
   addEventListener('load',()=>ScrollTrigger.refresh());
 }
