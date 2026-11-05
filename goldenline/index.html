@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GoldenLine · Akarsh N</title>
+<meta name="description" content="GoldenLine: real-time emergency capacity coordination that holds a hospital bed while the ambulance drives. Smart India Hackathon 2026 entry.">
+<meta name="theme-color" content="#0E1420">
+<meta property="og:title" content="GoldenLine · case study by Akarsh N">
+<meta property="og:description" content="GoldenLine: real-time emergency capacity coordination that holds a hospital bed while the ambulance drives. Smart India Hackathon 2026 entry.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://akarshncodes.github.io/goldenline/">
+<meta property="og:image" content="https://akarshncodes.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230E1420'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-size='36' fill='%23F2A93B'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap">
+<link rel="stylesheet" href="../assets/case.css">
+</head>
+<body>
+<header class="bar"><div class="wrap">
+  <a class="home" href="../">Akarsh <i>N</i></a>
+  <nav><a href="../#work">All projects</a><a href="../resume.pdf">Resume</a><a href="../#contact">Contact</a></nav>
+</div></header>
+<main>
+<div class="hero"><div class="wrap">
+  <div class="kick">Smart India Hackathon 2026 · SIH26198 · Team Starks</div>
+  <h1>GoldenLine</h1>
+  <p class="sub">In an emergency, families don't know which hospital has a free bed, ambulances drive to hospitals that can't take the patient, and hospitals get no warning. GoldenLine connects them in real time and holds the bed while the ambulance is on its way.</p>
+  <div class="links"><a class="btn primary" href="https://github.com/akarshncodes/goldenline" target="_blank" rel="noopener">Source code ↗</a></div>
+  <dl class="meta"><div><dt>Role</dt><dd>Team captain. Cleared both college selection rounds; wrote the functional requirements plan and directed the build phase by phase</dd></div><div><dt>Timeline</dt><dd>Sep 2026</dd></div><div><dt>Stack</dt><dd>Python, FastAPI, SQLAlchemy 2.0, Alembic, SQLite (PostgreSQL-ready), Alpine.js</dd></div><div><dt>Problem</dt><dd>SIH26198 · real-time emergency capacity coordination</dd></div></dl>
+</div></div>
+<div class="wrap"><div class="nums"><div><b>283</b><span>automated backend tests</span></div><div><b>23</b><span>functional requirements built, FR-0 to FR-22</span></div><div><b>6</b><span>user roles in one web console</span></div><div><b>4</b><span>languages: English, Hindi, Tamil, Bengali</span></div></div></div>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">01 · The problem</div><h2>Three failures, one cause</h2>
+<p>During a medical emergency in India, three things go wrong independently. Families don't know which hospital has an open bed, ICU slot or blood unit right now. Ambulances sometimes reach a hospital that then can't accept the patient, losing critical time. And hospitals get no advance warning, so they scramble instead of preparing.</p>
+<p>All three happen because hospitals, ambulances, blood banks and traffic control work as disconnected islands with no shared live data.</p>
+<p class="pull">GoldenLine is a coordination layer, not a replacement for 108 dispatch or a hospital's own system.</p>
+</div></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">02 · What I built</div><h2>One pipeline from the first call to discharge</h2>
+<p>A case can start two ways: a family presses SOS in the app, or an ambulance helper starts it on the spot after a 108 call. From there it's the same pipeline.</p>
+</div><ol class="steps"><li><b>Case created</b><span>From the family app, or by a registered ambulance helper with a mandatory next-of-kin number</span></li><li><b>On-scene assessment</b><span>The helper logs symptoms by voice or tap</span></li><li><b>Hospital ranking</b><span>The closest hospital with the right specialty, sorted by travel time, distance and rating, with no black-box model</span></li><li><b>Bed lock</b><span>A short-lived hold on the chosen bed so no one else can take it</span></li><li><b>Route and blood</b><span>Route suggestions, plus a blood-unit check when needed</span></li><li><b>Hospital prepares</b><span>The receiving team gets prep actions before arrival</span></li><li><b>QR handoff</b><span>Arrival confirmed by QR; the bed count updates automatically</span></li><li><b>Family tracking</b><span>A read-only SMS tracking link, then discharge feedback</span></li></ol></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">03 · Key ideas</div><h2>The details that make it safe to rely on</h2>
+<h3>Two ambulances can never claim the same last bed</h3>
+<p>The bed lock is a single guarded database statement: a lock is inserted only <em>if</em> the hospital's live capacity is still greater than its active locks. The database settles the race, so two simultaneous requests for the last ICU bed can't both win, and every collision is recorded.</p>
+<svg viewBox="0 0 640 170" role="img" aria-label="Two ambulances request the last bed; one lock succeeds, the other is redirected" style="width:100%;height:auto;margin:8px 0 18px">
+<g font-family="Inter,system-ui,sans-serif" font-size="14" fill="currentColor">
+<rect x="10" y="20" width="150" height="44" fill="none" stroke="currentColor" opacity=".5"/><text x="85" y="47" text-anchor="middle">Ambulance A</text>
+<rect x="10" y="106" width="150" height="44" fill="none" stroke="currentColor" opacity=".5"/><text x="85" y="133" text-anchor="middle">Ambulance B</text>
+<rect x="245" y="55" width="150" height="60" fill="none" stroke="#F2A93B" stroke-width="2"/><text x="320" y="80" text-anchor="middle" font-weight="600">Last ICU bed</text><text x="320" y="100" text-anchor="middle" font-size="12" opacity=".7">capacity &gt; locks ?</text>
+<line x1="160" y1="42" x2="245" y2="75" stroke="currentColor" opacity=".5"/><line x1="160" y1="128" x2="245" y2="95" stroke="currentColor" opacity=".5"/>
+<line x1="395" y1="72" x2="470" y2="42" stroke="#1B6B3A" stroke-width="2"/><text x="478" y="47" fill="#1B6B3A" font-weight="600">A: bed held ✓</text>
+<line x1="395" y1="98" x2="470" y2="128" stroke="#B4442F" stroke-width="2"/><text x="478" y="133" fill="#B4442F" font-weight="600">B: next hospital</text>
+</g></svg>
+<h3>A background supervisor, but only a human resolves</h3>
+<p>The Control Room watches the pipeline underneath everything: an ambulance whose location stops updating, two critical patients heading for the same last bed, a reported bed that was quietly given away. Every flag goes to a named human. Nothing is silently auto-resolved.</p>
+<h3>Privacy and abuse prevention built in</h3>
+<p>Staff sign in with hashed passwords (PBKDF2) and a real forgot-password flow, and families use one-time codes. Access is scoped by role, duplicate cases auto-merge, unusual request rates are flagged, and data can be deleted on request. The family sees which ambulance is coming and where it is, but deliberately not the driver's phone number, to avoid a harassment risk.</p>
+</div></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">04 · Results</div><h2>Built and tested requirement by requirement</h2>
+<p>The project was written first as a functional requirements plan, then built one requirement at a time, each with its own tests before the next began.</p>
+<div class="tbl"><table><thead><tr><th>Measure</th><th>Result</th></tr></thead><tbody>
+<tr><td>Functional requirements built</td><td class="n">23 (FR-0 to FR-22)</td></tr>
+<tr><td>Automated backend tests</td><td class="n">283</td></tr>
+<tr><td>End-to-end integration checks</td><td class="n">31 of 31</td></tr>
+<tr><td>Roles in one console</td><td class="n">Helper, Family, Hospital, Blood bank, Control room, Admin</td></tr>
+</tbody></table></div>
+<h3>Honest limits</h3>
+<ul class="limits"><li>It's a prototype. It's seeded with 25 real Dindigul hospitals, but bed and blood data are demo values, and it isn't connected to live 108 dispatch or hospital systems.</li>
+<li>Out of scope on purpose: if no registered ambulance with the app is present, the platform doesn't engage. An earlier family self-transport idea was scrapped as unsafe.</li></ul>
+</div></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">05 · How I built it</div><h2>My role, and how the AI tools were used</h2>
+<p>I build with AI development tools and I'm open about it. My part is the work the tools can't do alone: choosing the problem, writing the specification and the rules every change must respect, splitting the build into small tested phases, and checking each result against the project's own output.</p>
+<p>For GoldenLine, I wrote the functional requirements plan first and built it one requirement per phase, each with its own tests before the next began. That is why the project could grow from 17 to 23 requirements without breaking what already worked.</p>
+<p>Every number on this page can be traced to a file in the repository (the README records each phase and its tests).</p>
+</div></div></section>
+
+<section class="next"><div class="wrap"><a href="../cadastra/"><small>Next case study</small><strong>cadastra →</strong></a></div></section>
+</main>
+<footer><div class="wrap"><span>Akarsh N · B.E. Computer Science and Engineering, PSNA College of Engineering and Technology</span>
+<span><a href="mailto:akarshn.codes@gmail.com">akarshn.codes@gmail.com</a> · <a href="https://github.com/akarshncodes">GitHub</a> · <a href="https://www.linkedin.com/in/akarshncodes/">LinkedIn</a></span></div></footer>
+<script>
+(function(){var els=document.querySelectorAll('.rv');if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('in')});return}
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+els.forEach(function(e){io.observe(e)})})();
+</script>
+</body>
+</html>

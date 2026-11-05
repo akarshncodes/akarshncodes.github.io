@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>cadastra · Akarsh N</title>
+<meta name="description" content="cadastra: AI parcel mapping from drone imagery that labels every boundary as observed or inferred. Smart India Hackathon 2026 entry.">
+<meta name="theme-color" content="#0E1420">
+<meta property="og:title" content="cadastra · case study by Akarsh N">
+<meta property="og:description" content="cadastra: AI parcel mapping from drone imagery that labels every boundary as observed or inferred. Smart India Hackathon 2026 entry.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://akarshncodes.github.io/cadastra/">
+<meta property="og:image" content="https://akarshncodes.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230E1420'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-size='36' fill='%23F2A93B'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap">
+<link rel="stylesheet" href="../assets/case.css">
+</head>
+<body>
+<header class="bar"><div class="wrap">
+  <a class="home" href="../">Akarsh <i>N</i></a>
+  <nav><a href="../#work">All projects</a><a href="../resume.pdf">Resume</a><a href="../#contact">Contact</a></nav>
+</div></header>
+<main>
+<div class="hero"><div class="wrap">
+  <div class="kick">Smart India Hackathon 2026 · SIH26012 · Team Starks</div>
+  <h1>cadastra</h1>
+  <p class="sub">AI parcel mapping from drone imagery. It finds the property boundaries that leave evidence, infers the rest from how plots sit along a street, and labels every line as observed or guessed, so surveyors check the guesses first.</p>
+  
+  <dl class="meta"><div><dt>Role</dt><dd>Team captain. Led the research, the pipeline design and the measurement plan</dd></div><div><dt>Timeline</dt><dd>Sep 2026</dd></div><div><dt>Stack</dt><dd>Python, NumPy, SciPy, scikit-image, Shapely, GeoPandas, Rasterio, MapLibre</dd></div><div><dt>Problem</dt><dd>SIH26012 · Ministry of Rural Development: automated urban parcel mapping from drone imagery</dd></div></dl>
+</div></div>
+<div class="wrap"><div class="nums"><div><b>44.8–84.2%</b><span>of legal boundary length invisible from overhead, across 4 towns</span></div><div><b>Every line</b><span>labelled observed, weak or inferred, so surveyors know what was guessed</span></div><div><b>100%</b><span>topologically valid boundary output</span></div><div><b>6</b><span>independent evidence sources fused into one map</span></div></div></div>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">01 · The problem</div><h2>Many property boundaries can't be seen from the sky</h2>
+<p>Automated mapping tools usually assume a boundary is visible in the image. But in dense towns, row houses share one continuous roof, and the legal boundaries between them run underneath it. A camera looking straight down has nothing to detect.</p><figure><img src="../assets/case/cadastra-terrace.webp" alt="Four row houses under one continuous roof" loading="lazy"><figcaption>Same four houses, same moment: three legal boundaries on the left, none visible from above on the right.</figcaption></figure><p style="margin-top:24px">I measured this directly against real legal parcel boundaries. Across four Dutch towns, between 44.8% and 84.2% of boundary length left no visible trace from overhead. A tool that only draws what it sees will silently miss most of the map.</p>
+</div></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">02 · What I built</div><h2>Find, infer, label</h2>
+<p>Rather than pretend to see the invisible, cadastra does three things and is open about which is which.</p>
+</div><figure><img src="../assets/case/cadastra-findinfer.webp" alt="Find, infer, label workflow" loading="lazy"><figcaption>Step 1 finds the boundaries that leave evidence; step 2 closes the gaps using how plots are normally laid out; step 3 labels every line observed, weak or inferred.</figcaption></figure><ol class="steps"><li><b>Measure visibility</b><span>How much of the boundary on this tile is invisible: the number everything else rests on</span></li><li><b>Six evidence sources</b><span>Height steps, roof-plane breaks, edges and more, normalised onto one grid</span></li><li><b>Fuse</b><span>Six layers combined into one boundary-likelihood map</span></li><li><b>Vectorise and close</b><span>Lines become a graph, then closed parcels under a street-layout prior</span></li><li><b>Topology gate</b><span>Shared edges enforced, slivers removed, conflicts flagged</span></li><li><b>Surveyor review</b><span>A map and worklist where guessed lines come first</span></li></ol><figure><img src="../assets/case/cadastra-map.webp" alt="cadastra web viewer showing boundaries coloured by provenance" loading="lazy"><figcaption>The web viewer: boundaries coloured by how they were obtained, with layers, corrections and a surveyor worklist.</figcaption></figure></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">03 · Results</div><h2>Including what didn't work</h2>
+<div class="tbl"><table><thead><tr><th>Measure</th><th>Result</th></tr></thead><tbody>
+<tr><td>Invisible share of legal boundary, four towns</td><td class="n">44.8% to 84.2%</td></tr>
+<tr><td>Correctness of observed vs inferred lines, Delft</td><td class="n">67.5% vs 43.0%</td></tr>
+<tr><td>Correctness of observed vs inferred lines, Rotterdam</td><td class="n">44.7% vs 16.3%</td></tr>
+<tr><td>Topologically valid output</td><td class="n">100%</td></tr>
+</tbody></table></div>
+<p>On both tiles measured, observed lines were right more often than inferred ones, so the labels carry real information. That ordering was measured on the base pipeline. When extra building-footprint seeds were added in later experiments it held on only some tiles, so the claim is scoped to the base pipeline.</p>
+<h3>Negative results, reported openly</h3>
+<ul class="limits">
+<li><strong>Party-wall detection was dropped as a goal</strong> after measurement showed it couldn't be recovered from overhead imagery. It's reported as a measured negative result.</li>
+<li><strong>Full parcel reconstruction mostly fails:</strong> 1 of 24 reference parcels matched on a held-out Rotterdam half, 3 of 495 in Delft. The output is a valid boundary layer for triage, not a finished parcel register.</li>
+<li><strong>Ordering the worklist by provenance didn't beat ordering by length</strong> (67.0% vs 66.6%), so that claim isn't made.</li>
+<li>Validation uses open Dutch cadastral data, because no Indian legal boundary data is publicly available. The finding is structural, but the percentages are Dutch.</li></ul>
+</div></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">04 · How I built it</div><h2>My role, and how the AI tools were used</h2>
+<p>I build with AI development tools and I'm open about it. My part is the work the tools can't do alone: choosing the problem, writing the specification and the rules every change must respect, splitting the build into small tested phases, and checking each result against the project's own output.</p>
+<p>For cadastra, the discipline was in measurement: state what a result would mean before measuring it, report every tolerance with its number, and publish the negative results alongside the positive ones. Dropping party-wall detection was a decision taken from measured evidence.</p>
+<p>Every number on this page can be traced to a file in the repository (FINDINGS.md and RESULTS.md).</p>
+</div></div></section>
+
+<section class="next"><div class="wrap"><a href="../chakravyuh/"><small>Next case study</small><strong>CHAKRAVYUH →</strong></a></div></section>
+</main>
+<footer><div class="wrap"><span>Akarsh N · B.E. Computer Science and Engineering, PSNA College of Engineering and Technology</span>
+<span><a href="mailto:akarshn.codes@gmail.com">akarshn.codes@gmail.com</a> · <a href="https://github.com/akarshncodes">GitHub</a> · <a href="https://www.linkedin.com/in/akarshncodes/">LinkedIn</a></span></div></footer>
+<script>
+(function(){var els=document.querySelectorAll('.rv');if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('in')});return}
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+els.forEach(function(e){io.observe(e)})})();
+</script>
+</body>
+</html>

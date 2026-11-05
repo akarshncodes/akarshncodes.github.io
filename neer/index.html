@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NEER · Akarsh N</title>
+<meta name="description" content="NEER: six AI agents that investigate water leaks and refuse to close a case until data proves the repair worked. 4th place at HackSprint'26.">
+<meta name="theme-color" content="#0E1420">
+<meta property="og:title" content="NEER · case study by Akarsh N">
+<meta property="og:description" content="NEER: six AI agents that investigate water leaks and refuse to close a case until data proves the repair worked. 4th place at HackSprint'26.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://akarshncodes.github.io/neer/">
+<meta property="og:image" content="https://akarshncodes.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230E1420'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-size='36' fill='%23F2A93B'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap">
+<link rel="stylesheet" href="../assets/case.css">
+</head>
+<body>
+<header class="bar"><div class="wrap">
+  <a class="home" href="../">Akarsh <i>N</i></a>
+  <nav><a href="../#work">All projects</a><a href="../resume.pdf">Resume</a><a href="../#contact">Contact</a></nav>
+</div></header>
+<main>
+<div class="hero"><div class="wrap">
+  <div class="kick">4th place · HackSprint'26 · VCET Madurai · ₹3,000 + shield</div>
+  <h1>NEER</h1>
+  <p class="sub">Six AI agents investigate a suspected water leak, choose the next safest action with a human's approval, and refuse to close the case until independent network measurements prove the repair actually worked.</p>
+  <div class="links"><a class="btn primary" href="https://github.com/akarshncodes/NEER" target="_blank" rel="noopener">Source code ↗</a></div>
+  <dl class="meta"><div><dt>Role</dt><dd>Team Vector Zero. Designed the agent loop and safety rules, and directed the build</dd></div><div><dt>Timeline</dt><dd>24 hours · 30 Sep – 1 Oct 2026</dd></div><div><dt>Stack</dt><dd>LangGraph, Model Context Protocol, WNTR hydraulic twin, FastAPI, SQLite, Streamlit</dd></div><div><dt>Problem</dt><dd>SC-02 · agentic AI for closed-loop leak investigation and repair verification</dd></div></dl>
+</div></div>
+<div class="wrap"><div class="nums"><div><b>79 / 80</b><span>test runs passed: 16 scenarios × 5 seeds never used for tuning</span></div><div><b>0</b><span>cases wrongly closed while still leaking</span></div><div><b>0 / 35</b><span>look-alike events in the test suite that sent a crew</span></div><div><b>78%</b><span>leaks really fixed in the ablation study, vs 42% for a threshold alarm</span></div></div></div>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">01 · The problem</div><h2>Leak alarms send crews to dig in the wrong places</h2>
+<p>Water utilities lose a large share of treated water before it reaches a tap. When a meter suggests a leak, the usual response is a simple threshold alarm: someone is sent out, digs where they think it is, and the contractor reports the job as fixed. Nobody independently checks whether the water loss actually stopped.</p>
+<p>So the hard part isn't spotting that something is wrong. It's deciding <em>what it is</em>, <em>where</em> it is, <em>what to do next</em> with limited crews, and <em>proving</em> the repair worked.</p>
+<p class="pull">NEER doesn't close a case on the crew's word. It closes it on the data.</p>
+</div></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">02 · What I built</div><h2>A team of six agents running one closed loop</h2>
+<p>The loop is SUSPECT → QUESTION → INVESTIGATE → ACT → VERIFY → REPLAN. Each agent has one job and one hard limit.</p>
+</div><ol class="steps"><li><b>Sentinel</b><span>Watches every zone's flow and pressure. No AI, cannot dispatch</span></li><li><b>Skeptic</b><span>Tries to explain every alarm away: pump actions, planned work, a faulty sensor. Cannot approve its own plan</span></li><li><b>Detective</b><span>Narrows the leak to an area with its size and uncertainty. Numbers only from tools</span></li><li><b>Orchestrator</b><span>Picks the next best action by value per cost and re-plans after every failure</span></li><li><b>Field Commander</b><span>Listens before any dig and sends work orders and Tamil/English SMS. Needs a named approver</span></li><li><b>Auditor</b><span>Independently measures the loss before and after repair, and holds the contractor until it's proven</span></li></ol><figure><img src="../assets/case/neer-control.webp" alt="NEER Control Room dashboard" loading="lazy"><figcaption>The Control Room: a hidden 20 L/s leak taken from first alarm to a repair proven at 999:1 evidence.</figcaption></figure></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">03 · Key ideas</div><h2>Safety and self-correction live in code, not in the prompt</h2>
+<ul>
+<li><strong>The AI plans, the code decides what's physically true.</strong> Physics and maths live in tested engine code. The language model chooses from an allowed set of actions and explains them, and it never produces a number a tool didn't return.</li>
+<li><strong>Safety gates inside the tools themselves.</strong> A dig needs an acoustic "yes", a named approver with the supervisor or engineer role, and only one open dig per case. Sensor data is read-only.</li>
+<li><strong>19 tools across 4 MCP servers</strong> (SCADA, digital twin, field and audit), with timeouts, retries, a circuit breaker and a direct-call fallback if the MCP transport fails.</li>
+<li><strong>Three self-correction loops:</strong> at the tool level, at the reasoning level (the Skeptic's review), and in reality (an acoustic "no" or a failed repair triggers a re-plan).</li>
+<li><strong>Never blocked by the network.</strong> The model chain falls back from Groq to Gemini to a local model to plain rules, so the demo runs with no API keys at all.</li>
+</ul><figure><img src="../assets/case/neer-arch.webp" alt="NEER multi-agent architecture" loading="lazy"><figcaption>Architecture: city data, four MCP servers, six LangGraph agents with an evidence ledger, and the humans who approve.</figcaption></figure>
+</div></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">04 · Results</div><h2>Does the agent team actually matter?</h2>
+<p>An ablation study ran the same 72 cases (36 real leaks, 36 look-alikes) through five systems, from a plain threshold alarm to full NEER:</p>
+<div class="tbl"><table><thead><tr><th>System</th><th>Crews sent for look-alikes</th><th>Leaks really fixed</th><th>Tickets closed while still leaking</th></tr></thead><tbody>
+<tr><td>Threshold alarm</td><td class="n">56%</td><td class="n">42%</td><td class="n">52%</td></tr>
+<tr><td>Leak model only</td><td class="n">56%</td><td class="n">56%</td><td class="n">35%</td></tr>
+<tr><td>+ Skeptic</td><td class="n">6%</td><td class="n">56%</td><td class="n">35%</td></tr>
+<tr><td>+ Orchestrator</td><td class="n">56%</td><td class="n">58%</td><td class="n">25%</td></tr>
+<tr class="win"><td>Full NEER</td><td class="n">6%</td><td class="n">78%</td><td class="n">0%</td></tr>
+</tbody></table></div>
+<p>Separately, the full evaluation suite (16 scenarios on five random seeds never used for tuning) passed 79 of 80 runs: no case closed while a leak was still running, no physical action without a valid approver, all 20 chaos runs recovered, and all 5 deliberately wrong repairs were caught. The one failure, a second leak that wasn't found, was escalated to a human.</p>
+<p>To be precise about what was measured: that evaluation ran on the deterministic rules path that backs every AI decision. A run with live language models also scored 79 of 80, but free-tier quota limits meant most of its decisions fell back to the same rules, so it mainly shows the fallback works.</p>
+<h3>Honest limits</h3>
+<ul class="limits"><li>It runs on a simulated city (the EPA Net3 benchmark network), not live utility data.</li>
+<li>It narrows a leak to an area of about a kilometre of pipe, not a GPS point. The acoustic check pinpoints it within that area.</li>
+<li>Very small leaks can take several days to show, and NEER waits for more data rather than guessing.</li>
+<li>Area scores are relative likelihoods, not calibrated probabilities.</li></ul>
+</div></div></section>
+<section class="rv"><div class="wrap"><div class="read">
+<div class="lab">05 · How I built it</div><h2>My role, and how the AI tools were used</h2>
+<p>I build with AI development tools and I'm open about it. My part is the work the tools can't do alone: choosing the problem, writing the specification and the rules every change must respect, splitting the build into small tested phases, and checking each result against the project's own output.</p>
+<p>For NEER, the key decision was where the AI is allowed to act. It plans and explains; physics, numbers and safety live in tested code that can veto it. Every random process takes a seed, so any demo replays identically, and the Auditor is kept independent: it never reads the crew's report.</p>
+<p>Every number on this page can be traced to a file in the repository (docs/EVAL.md, docs/ABLATION.md and docs/ENGINE_REPORT.txt).</p>
+</div></div></section>
+
+<section class="next"><div class="wrap"><a href="../goldenline/"><small>Next case study</small><strong>GoldenLine →</strong></a></div></section>
+</main>
+<footer><div class="wrap"><span>Akarsh N · B.E. Computer Science and Engineering, PSNA College of Engineering and Technology</span>
+<span><a href="mailto:akarshn.codes@gmail.com">akarshn.codes@gmail.com</a> · <a href="https://github.com/akarshncodes">GitHub</a> · <a href="https://www.linkedin.com/in/akarshncodes/">LinkedIn</a></span></div></footer>
+<script>
+(function(){var els=document.querySelectorAll('.rv');if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('in')});return}
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+els.forEach(function(e){io.observe(e)})})();
+</script>
+</body>
+</html>
